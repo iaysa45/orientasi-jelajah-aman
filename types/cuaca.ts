@@ -5,7 +5,7 @@ export interface DataCuaca {
   catatan?: string;
 }
 
-export type TingkatAQI = "Baik" | "Sedang" | "TIDAK_SEHAT" | "Berbahaya";
+export type TingkatAQI = "BAIK" | "SEDANG" | "TIDAK_SEHAT" | "BERBAHAYA";
 
 export interface WeatherCardProps {
   kota: string;
