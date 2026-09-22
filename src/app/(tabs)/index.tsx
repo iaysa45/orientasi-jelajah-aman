@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 
-// Catatan: gunakan ../components/ jika file berada di dalam folder app/
-// yang sejajar dengan folder components/
-import IndikatorAQI from "../components/IndikatorAQI";
-import RiwayatList from "../components/RiwayatList";
-import SearchBox from "../components/SearchBox";
-import WeatherCard from "../components/WeatherCard";
+import IndikatorAQI from "../../components/IndikatorAQI";
+import RiwayatList from "../../components/RiwayatList";
+import SearchBox from "../../components/SearchBox";
+import WeatherCard from "../../components/WeatherCard";
 
 export default function HalamanUtama() {
   const [kotaAktif, setKotaAktif] = useState("Pekalongan");
