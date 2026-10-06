@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -121,10 +122,20 @@ export default function HalamanUtama() {
             indeksAQI={kualitasUdara.indeksAQI}
           />
 
-          <Text>
-            Maks: {cuaca.harian.suhuMaksimal[0]}°C | Min:{" "}
-            {cuaca.harian.suhuMinimal[0]}°C
-          </Text>
+          <Button
+            title="Tambahkan ke Favorit"
+            onPress={() =>
+              router.push({
+                pathname: "/tambah-favorit",
+                params: {
+                  id: String(kotaTerpilih.id),
+                  nama: kotaTerpilih.name,
+                  lat: String(kotaTerpilih.latitude),
+                  lon: String(kotaTerpilih.longitude),
+                },
+              })
+            }
+          />
         </>
       )}
 
