@@ -1,12 +1,15 @@
 import * as SQLite from "expo-sqlite";
+
 const NAMA_DATABASE = "jelajah-aman.db";
-const VERSI_DATABASE = 1;
+const VERSI_DATABASE = 2;
+
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
-// Satu pintu untuk seluruh aplikasi: database dibuka dan dimigrasi SEKALI saja
+
+// Satu pintu untuk membuka database dan menjalankan migrasi.
 export function ambilDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (!dbPromise) {
     dbPromise = bukaDanMigrasi().catch((err) => {
-      dbPromise = null; // izinkan percobaan ulang jika gagal
+      dbPromise = null;
       throw err;
     });
   }
@@ -23,23 +26,33 @@ async function migrasiDatabase(db: SQLite.SQLiteDatabase): Promise<void> {
   );
   let versiSaatIni = baris?.user_version ?? 0;
   if (versiSaatIni >= VERSI_DATABASE) return;
+  // Migrasi versi 1: membuat tabel cache jika belum ada.
   if (versiSaatIni < 1) {
     await db.execAsync(`
-PRAGMA journal_mode = 'wal';
-CREATE TABLE IF NOT EXISTS cache_cuaca (
-kunci TEXT PRIMARY KEY NOT NULL,
-kota_id INTEGER NOT NULL,
-nama_kota TEXT NOT NULL,
-latitude REAL NOT NULL,
-longitude REAL NOT NULL,
-cuaca_json TEXT NOT NULL,
-aqi_json TEXT NOT NULL,
-disimpan_pada INTEGER NOT NULL
-);
-`);
+      PRAGMA journal_mode = 'wal';
+
+      CREATE TABLE IF NOT EXISTS cache_cuaca (
+        kunci TEXT PRIMARY KEY NOT NULL,
+        kota_id INTEGER NOT NULL,
+        nama_kota TEXT NOT NULL,
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL,
+        cuaca_json TEXT NOT NULL,
+        aqi_json TEXT NOT NULL,
+        disimpan_pada INTEGER NOT NULL
+      );
+    `);
     versiSaatIni = 1;
   }
-  // Migrasi berikutnya ditambahkan di sini, contoh:
-  // if (versiSaatIni < 2) { ...ALTER TABLE...; versiSaatIni = 2; }
-  await db.execAsync("PRAGMA user_version = " + VERSI_DATABASE);
+
+  // Migrasi versi 2: menambahkan kolom tanpa menghapus data lama.
+  if (versiSaatIni < 2) {
+    await db.execAsync(`
+      ALTER TABLE cache_cuaca
+      ADD COLUMN jumlah_dibuka INTEGER NOT NULL DEFAULT 0;
+    `);
+    versiSaatIni = 2;
+  }
+  // Simpan versi database setelah migrasi selesai.
+  await db.execAsync("PRAGMA user_version = " + versiSaatIni);
 }

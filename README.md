@@ -54,3 +54,7 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Mekanisme Cache Offline-First
+
+Aplikasi ini menggunakan cache supaya data cuaca tetap bisa ditampilkan meskipun koneksi internet sedang tidak tersedia. Cache-segar adalah data yang umurnya masih kurang dari 30 menit, sehingga aplikasi bisa langsung menggunakan data tersimpan tanpa meminta data baru ke internet. Cache-basi adalah data yang sudah melewati 30 menit, tetapi masih bisa digunakan sebagai cadangan ketika internet gagal. Sementara itu, first-run offline adalah kondisi ketika aplikasi dibuka tanpa internet dan belum memiliki data cache untuk kota yang dipilih, sehingga data cuaca belum bisa ditampilkan. Label status data penting bagi pengguna agar mereka tahu apakah informasi cuaca berasal dari cache yang masih segar, cache lama, atau jaringan internet.
